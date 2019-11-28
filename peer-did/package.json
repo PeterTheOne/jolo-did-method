@@ -1,0 +1,17 @@
+{
+  "name": "peer-did",
+  "version": "0.1.0",
+  "description": "did:peer implementation",
+  "main": "index.js",
+  "author": "Jolocom",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/bs58": "^4.0.1",
+    "@types/node": "^12.12.14",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "bs58": "^4.0.1"
+  }
+}
