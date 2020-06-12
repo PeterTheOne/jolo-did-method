@@ -2230,10 +2230,10 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.4.tgz#014ee8f8f669c5c58023da64b8179c083a28c46c"
   integrity sha512-ZIzRpLJrOj7jjP2miAtgqIfmzbxa4ZOr5jJc601zklsfEx9oTzmmj2nVpIPRpNlRTIh8lc1kyViIY7BWSGNmKw==
 
-did-resolver@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/did-resolver/-/did-resolver-1.1.0.tgz#27a63b6f2aa8dee3d622cd8b8b47360661e24f1e"
-  integrity sha512-Q02Sc5VuQnJzzR8fQ/DzyCHiYb31WpQdocOsxppI66wwT4XalYRDeCr3a48mL6sYPQo76AkBh0mxte9ZBuQzxA==
+did-resolver@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/did-resolver/-/did-resolver-2.0.0.tgz#4fa505bebf1afee8ec4f1c24f8512d83538f5cf2"
+  integrity sha512-GBnfhGIdJRHh8daEbqt3RrGRdmm0ClEmCkh7LLdOVuUjNfkZVNJ1EDr5RB6+zpVMvNqHEssSEy9aDPSPqDTgUA==
 
 diff-sequences@^24.9.0:
   version "24.9.0"
