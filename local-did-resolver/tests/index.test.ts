@@ -28,14 +28,23 @@ describe("Local DID Resolver", () => {
         getIdFromEvent,
         create: getIcp,
       }).create({}) as string
+      
       const icp: string = JSON.parse(keyEvent).icp
-      console.log(icp)
-      testDb.append(getIdFromEvent(icp), [icp])
-      return expect(new Resolver(getResolver({
+
+      const id = await getIdFromEvent(icp)
+
+      testDb.append(`did:un:${id}`, [icp])
+
+      const testDDO = await validateEvents(JSON.stringify([icp]))
+
+      const resolver = new Resolver(getResolver({
         dbInstance: testDb,
         validateEvents
-      })).resolve(getIdFromEvent(keyEvent)))
-        .resolves.toEqual(await validateEvents(JSON.stringify([icp])))
+      }))
+
+      const ddo = await resolver.resolve(`did:un:${id}`)
+      
+      return expect(ddo).toEqual(testDDO)
     });
   });
 });
