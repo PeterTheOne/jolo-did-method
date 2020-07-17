@@ -5,15 +5,15 @@ interface DbState {
 }
 
 // SMALL MOCK IMPLEMENTATION, this will mutate the initialState
-export const createDb = (initialState: DbState = {}): InternalDb =>
-  ({
-    append: async (events: string[]) => {
-      const eventId = extractMessageId(events[0])
-      if (!initialState[eventId] || !initialState[eventId].length) {
-        initialState[eventId] = []
+export const createDb = (
+  initialState: DbState = {}
+): InternalDb => ({
+    append: async (id: string, events: string[]) => {
+      if (!initialState[id] || !initialState[id].length) {
+        initialState[id] = []
       }
 
-      initialState[eventId] = initialState[eventId].concat(events)
+      initialState[id] = initialState[id].concat(events)
       return true
     },
     delete: async (id: string) => {
@@ -26,7 +26,7 @@ export const createDb = (initialState: DbState = {}): InternalDb =>
 
 export interface InternalDb {
   read: (id: string) => Promise<string[]>
-  append: (events: string[]) => Promise<boolean>
+  append: (id: string, events: string[]) => Promise<boolean>
   delete: (id: string) => Promise<boolean>,
   debug: () => DbState
 }
