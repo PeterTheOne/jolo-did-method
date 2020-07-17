@@ -1,59 +1,25 @@
-import { getPublicProfile, getResolver } from "../ts";
+import { getResolver, getRegistrar, extractMessageId } from "../ts";
 import { Resolver } from "did-resolver";
-import { testDid, testDidDoc, testDidDocWithPublicProfile } from "./test.data";
+import { testDid, testDidDoc } from "./test.data";
+import { createDb } from "../ts/db";
 
-describe("DID Resolver", () => {
-  let dbMock;
-
-  beforeEach(() => {
-    ethereumMock = jest
-      .spyOn(RegistryContract.prototype, "resolveDID")
-      .mockResolvedValue("testHash");
-    jest
-      .spyOn(IpfsStorageAgent.prototype, "catJSON")
-      .mockResolvedValue(testDidDoc);
-  });
-
+describe("Local DID Resolver", () => {
   describe("getResolver", () => {
-    it("should resolve jolo DID", async () => {
-      const localResolver = getResolver();
-      const resolver = new Resolver(localResolver);
-      const didDoc = await resolver.resolve(testDid);
-      expect(didDoc).toEqual(testDidDoc);
+    it("It should fail to resolve an unknown local DID", async () => {
+      const testDb = createDb()
+      const resolver = new Resolver(getResolver(testDb));
+
+      return expect(resolver.resolve(testDid)).rejects.toEqual(
+        new Error('resolver returned null for did:un:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+      )
     });
 
-    it("should fail if did id string is wrong", async () => {
-      // disable mock in this test
-      dbMock.mockRestore();
-
-      const localResolver = getResolver();
-      const resolver = new Resolver(localResolver);
-
-      await expect(resolver.resolve("did:un:notHex")).rejects.toThrow();
-    });
-
-    it('should return null if DID is not registered', async () => {
-      ethereumMock.mockResolvedValue(undefined);
-
-      const resolver = new Resolver(getResolver());
-
-      await expect(resolver.resolve('')).rejects.toThrow('Missing DID');
-    });
-  });
-
-  describe("getPublicProfile", () => {
-    it("should test public profile resolver", async () => {
-      const publicProfile = await getPublicProfile(testDidDocWithPublicProfile);
-      expect(IpfsStorageAgent.prototype.catJSON).toBeCalledWith("testHash");
-      // public profile should be mocked return value of catJson see line #11
-      expect(publicProfile).toEqual(testDidDoc);
-    });
-
-    it("should return null if no public profile is in DID Document", async () => {
-      // @ts-ignore
-      const publicProfile = await getPublicProfile(testDidDoc);
-      expect(IpfsStorageAgent.prototype.catJSON).toBeCalledTimes(0);
-      expect(publicProfile).toBe(undefined);
+    it('It should correctly register a known local DID', async () => {
+      const testDb = createDb()
+      const keyEvent = await getRegistrar(testDb).create()
+      const { icp } = JSON.parse(keyEvent)
+      testDb.append([icp])
+      return expect(new Resolver(getResolver(testDb)).resolve(extractMessageId(icp))).resolves.toEqual({})
     });
   });
 });

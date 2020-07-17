@@ -1,6 +1,7 @@
 import { DIDDocument } from "did-resolver";
 
-export const testDid = 'did:jolo:1fb352353ff51248c5104b407f9c04c3666627fcf5a167d693c9fc84b75964e2'
+export const testDid = 'did:un:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+
 export const testDidDoc = {
   '@context': "https://w3id.org/did/v1",
   "authentication": [

@@ -19,17 +19,17 @@ export function getResolver(dbInstance: InternalDb) {
 
 export function getRegistrar(dbInstance: InternalDb) {
   return {
-    update: async (message: string) => {
+    update: async (events: string[]) => {
       try {
-        const keyEventId = extractMessageId(message)
+        const keyEventId = extractMessageId(events[0])
         const previousEvents = await dbInstance.read(keyEventId) || []
 
         const document = await validateEvents(
-          `[${previousEvents.concat(message).join(',')}]` // TODO
+          previousEvents.concat(events)
         )
 
         const parsedDidDocument = JSON.parse(document)
-        dbInstance.append(message)
+        dbInstance.append(events)
         return parsedDidDocument
         } catch (err) {
           return err
@@ -46,7 +46,7 @@ export function getRegistrar(dbInstance: InternalDb) {
 export const extractMessageId = (serializedEvent: string): string => {
   const { keyEvent } = separateEventAndSignature(serializedEvent)
   try {
-    return JSON.parse(keyEvent).id
+    return `did:un:${JSON.parse(keyEvent).id}`
   } catch(err) {
     return err
   }
