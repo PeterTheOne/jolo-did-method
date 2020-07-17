@@ -1,5 +1,6 @@
 import { DIDDocument, ParsedDID, Resolver } from "did-resolver";
 import { InternalDb } from "./db";
+import { validateEvents, getIcp } from '@jolocom/native-utils-node'
 
 export function getResolver(dbInstance: InternalDb) {
   return { 
@@ -7,7 +8,7 @@ export function getResolver(dbInstance: InternalDb) {
       const events = await dbInstance.read(did)
 
       if (events && events.length) {
-        return KERI.keriValidateEvents(JSON.stringify(events)) // TODO
+        return validateEvents(JSON.stringify(events)) // TODO
         .then(JSON.parse)
       }
 
@@ -23,7 +24,7 @@ export function getRegistrar(dbInstance: InternalDb) {
         const keyEventId = extractMessageId(message)
         const previousEvents = await dbInstance.read(keyEventId) || []
 
-        const document = await KERI.keriValidateEvents(
+        const document = await validateEvents(
           `[${previousEvents.concat(message).join(',')}]` // TODO
         )
 
@@ -37,7 +38,7 @@ export function getRegistrar(dbInstance: InternalDb) {
     delete: (id: string): Promise<boolean> => dbInstance.delete(id),
     create: () => {
       console.warn('For testing')
-      return KERI.keriGetIcp() // TODO the args are not needed anymore
+      return getIcp() // TODO the args are not needed anymore
     }
   }
 }
