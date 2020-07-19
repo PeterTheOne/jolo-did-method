@@ -1,5 +1,3 @@
-import { extractMessageId } from "."
-
 interface DbState {
   [did: string]: string[]
 }

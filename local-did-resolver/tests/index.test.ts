@@ -1,50 +1,52 @@
 import { getResolver, getRegistrar } from "../ts";
 import { Resolver } from "did-resolver";
-import { testDid, testDidDoc } from "./test.data";
 import { createDb } from "../ts/db";
 
+// Testing against a specific implementation (KERI) of a validation function.
 import { validateEvents, getIdFromEvent, getIcp } from '@jolocom/native-utils-node'
 
 describe("Local DID Resolver", () => {
   describe("getResolver", () => {
     it("It should fail to resolve an unknown local DID", async () => {
       const testDb = createDb()
+      const testDid = 'did:un:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
       const resolver = new Resolver(getResolver({
         dbInstance: testDb,
         validateEvents
       }));
 
-
       return expect(resolver.resolve(testDid)).rejects.toEqual(
-        new Error('resolver returned null for did:un:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+        new Error(`resolver returned null for ${testDid}`)
       )
     });
 
     it('It should correctly register a known local DID', async () => {
-      const testDb = createDb()
-      const keyEvent = await getRegistrar({
-        dbInstance: testDb,
+      const db = createDb()
+
+      const registrar = getRegistrar({
+        dbInstance: db,
         validateEvents,
         getIdFromEvent,
         create: getIcp,
-      }).create({}) as string
+      })
+
+      const resolver = getResolver({
+        dbInstance: db,
+        validateEvents
+      })
+
+      const keyEvent = await registrar.create({}) as string
       
       const icp: string = JSON.parse(keyEvent).icp
 
-      const id = await getIdFromEvent(icp)
-
-      testDb.append(`did:un:${id}`, [icp])
+      await registrar.update([icp])
 
       const testDDO = await validateEvents(JSON.stringify([icp]))
 
-      const resolver = new Resolver(getResolver({
-        dbInstance: testDb,
-        validateEvents
-      }))
-
-      const ddo = await resolver.resolve(`did:un:${id}`)
+      const ddo = await new Resolver(resolver)
+        .resolve(`did:un:${await getIdFromEvent(icp)}`)
       
-      return expect(ddo).toEqual(testDDO)
+      return expect(ddo).toEqual(JSON.parse(testDDO))
     });
   });
 });

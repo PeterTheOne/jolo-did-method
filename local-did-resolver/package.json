@@ -17,10 +17,10 @@
     "@types/jest": "^24.0.23",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
+    "@jolocom/native-utils-node": "./jolocom-native-utils-node-v0.1.0.tgz",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@jolocom/native-utils-node": "/home/you/Documents/work/rust-multi-target/node/jolocom-native-utils-node-0.1.0.tgz",
     "detect-node": "^2.0.4",
     "did-resolver": "2.0.0"
   }
