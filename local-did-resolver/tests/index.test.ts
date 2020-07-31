@@ -35,16 +35,16 @@ describe("Local DID Resolver", () => {
         validateEvents
       })
 
-      const keyEvent = await registrar.create({}) as string
+      const keyEvent = await registrar.create()
       
-      const icp: string = JSON.parse(keyEvent).icp
+      const { event } = keyEvent
 
-      await registrar.update([icp])
+      await registrar.update([event])
 
-      const testDDO = await validateEvents(JSON.stringify([icp]))
+      const testDDO = await validateEvents(JSON.stringify([event]))
 
       const ddo = await new Resolver(resolver)
-        .resolve(`did:un:${await getIdFromEvent(icp)}`)
+        .resolve(`did:un:${await getIdFromEvent(event)}`)
       
       return expect(ddo).toEqual(JSON.parse(testDDO))
     });

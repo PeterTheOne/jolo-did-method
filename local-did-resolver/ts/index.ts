@@ -47,6 +47,15 @@ export const getRegistrar = (cfg: {
           return err
       }
     },
-    delete: (id: string): Promise<boolean> => cfg.dbInstance.delete(id),
-    create: (config?: {}) => cfg.create(config)
+    delete: (id: string) => cfg.dbInstance.delete(id),
+    create: async (config?: {}): Promise<{event: string, sk0: string, sk1: string}> => {
+      const eventAndKeys = JSON.parse(await cfg.create(config))
+      // TODO This transformation can go, once we change the create
+      // fn in KERIOX to return {event, ..} instead of {icp, ..}
+
+      return {
+        ...eventAndKeys,
+        event: eventAndKeys.icp
+      }
+    }
   })
