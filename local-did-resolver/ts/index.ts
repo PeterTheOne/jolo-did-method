@@ -3,7 +3,7 @@ import { InternalDb } from "./db";
 
 type EventValidationFunction = (events: string) => Promise<string>
 type IdExtractionFunction = (event: string) => Promise<string>
-type IdCreationFunction = <T, C>(config?: C) => Promise<T>
+type IdCreationFunction<T, C> = (config?: C) => Promise<T>
 
 export const getResolver = (cfg: {
   dbInstance: InternalDb,
@@ -20,11 +20,11 @@ export const getResolver = (cfg: {
     }
  })
 
-export const getRegistrar = (cfg: {
+export const getRegistrar = <T, C>(cfg: {
   dbInstance: InternalDb,
   validateEvents: EventValidationFunction,
   getIdFromEvent: IdExtractionFunction,
-  create: IdCreationFunction
+  create: IdCreationFunction<T, C>
 }) => ({
     update: async (events: string[]) => {
       try {
