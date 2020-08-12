@@ -19,12 +19,10 @@ export const createDb = (
       return true
     },
     read: async id => initialState[id] || [],
-    debug: () => initialState
   })
 
 export interface InternalDb {
   read: (id: string) => Promise<string[]>
   append: (id: string, events: string[]) => Promise<boolean>
   delete: (id: string) => Promise<boolean>,
-  debug: () => DbState
 }

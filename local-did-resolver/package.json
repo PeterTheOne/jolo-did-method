@@ -1,6 +1,6 @@
 {
   "name": "local-did-resolver",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "main": "js",
   "types": "js",
   "license": "MIT",
